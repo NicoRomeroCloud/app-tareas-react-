@@ -18,8 +18,15 @@ const hola2 = 'Descripción';
 class App extends Component {
 
 
-  constructor(props) {
+  // Se define el constructor del componente. 
+  // En el estado inicial del componente, se establecen varias 
+  // propiedades, como modal (para controlar la visibilidad de un modal),
+  // viewCompleted (para filtrar tareas completadas o incompletas), 
+  // activeItem (para mantener un seguimiento del ítem de tarea 
+  // actualmente activo), y 
+  // taskList (para almacenar la lista de tareas).
 
+  constructor(props) {
     super(props);
     this.state = {
       modal: false,
@@ -33,17 +40,29 @@ class App extends Component {
     };
   }
 
-
+  // Se implementa el método componentDidMount, 
+  // que se ejecuta después de que el componente se monta. 
+  // Llama a la función refreshList para cargar inicialmente 
+  // la lista de tareas desde la API.
   componentDidMount() {
     this.refreshList();
   }
 
+  // Se define el método refreshList, que utiliza
+  // Axios para hacer una solicitud GET a una 
+  // API en http://localhost:8000/api/tasks/. 
+  // Cuando la solicitud se completa con éxito, 
+  // actualiza el estado taskList con los datos 
+  // de respuesta de la API.
   refreshList = () => {
     axios.get("http://localhost:8000/api/tasks/")
       .then(res => this.setState({ taskList: res.data }))
       .catch(err => console.log(err))
   }
 
+  // Se define el método displayCompleted, que recibe un argumento 
+  // status y actualiza el estado viewCompleted para 
+  // filtrar las tareas completadas o incompletas.
   displayCompleted = status => {
     if (status) {
       this.setState({ viewCompleted: true });
@@ -52,7 +71,10 @@ class App extends Component {
     }
   }
 
-  // renderizando los items de la lista que esten completos || incompletos
+  // Se define el método renderItems, que filtra las 
+  // tareas basadas en el estado viewCompleted y luego 
+  // mapea las tareas filtradas para renderizarlas en la 
+  // interfaz de usuario.  
   renderItems = () => {
     const { viewCompleted } = this.state;
     const newItems = this.state.taskList.filter(
@@ -135,11 +157,19 @@ class App extends Component {
   };
 
 
-
-  toggle = () => {//add this after modal creation
-    this.setState({ modal: !this.state.modal });//add this after modal creation
+  // Se define el método toggle, que alterna la 
+  // visibilidad del modal al cambiar el estado 
+  // modal entre true y false.
+  toggle = () => {
+    this.setState({ modal: !this.state.modal });
   };
 
+  // Se define el método handleSubmit, que se llama cuando 
+  // se envía un formulario. Dependiendo de si el elemento 
+  // tiene una propiedad id, realiza una solicitud PUT para 
+  // editar una tarea existente o una solicitud POST para 
+  // crear una nueva tarea. Luego, llama a refreshList para 
+  // actualizar la lista de tareas.
   handleSubmit = item => {
     this.toggle();
     if (item.id) {
@@ -155,6 +185,10 @@ class App extends Component {
       .then(res => this.refreshList());
   };
 
+  // Se define el método handleDelete, que se utiliza para 
+  // eliminar una tarea. Realiza una solicitud DELETE 
+  // a la API y, después de la eliminación exitosa, 
+  // llama a refreshList para actualizar la lista de tareas.
   handleDelete = item => {
     axios
       .delete(`http://localhost:8000/api/tasks/${item.id}/`)
@@ -162,18 +196,28 @@ class App extends Component {
   };
 
 
-
+  // Se define el método createItem, que se utiliza 
+  // para crear una nueva tarea. Inicializa un objeto 
+  // item con propiedades de título, descripción y 
+  // completado, y luego actualiza el estado activeItem 
+  // y modal para abrir el modal de creación.
   createItem = () => {
     const item = { title: "", description: "", completed: false };
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
+  // Se define el método editItem, que se utiliza para editar 
+  // una tarea existente. Actualiza el estado activeItem con 
+  // la tarea seleccionada y abre el modal de edición.
   editItem = item => {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
 
-
+  // Se define el método render, que renderiza la interfaz de 
+  // usuario de la aplicación. Esto incluye un encabezado, 
+  // una lista de tareas y un botón para crear una nueva tarea. 
+  // También muestra el modal de edición/creación de tareas.
   render() {
     return (
       <main className='content p-5 bg-dark' style={{ width: '100%', height: '100vh' }}>
